@@ -16,3 +16,7 @@ A visual interface for creating stunning mathematical animations with Manim
 📊 Color-coded animation timeline
 
 Created to help educators and math enthusiasts like Dimensional Algebra viewers create beautiful mathematical visualizations with ease.
+
+## 📺 Screenshot
+![Manim GUI Editor](https://i.ibb.co/m5bjPzsz/Screenshot-from-2025-07-18-23-50-33.png)
+*The Manim GUI Editor interface - by Dimensional Algebra*
