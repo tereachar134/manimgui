@@ -82,11 +82,21 @@ install_manimgui() {
         echo -e "${RED}Failed to upgrade pip${NC}"
         exit 1
     }
-    
+
     pip install -r requirements.txt || {
-        echo -e "${RED}Failed to install dependencies${NC}"
+        echo -e "${RED}Failed to install dependencies from requirements.txt${NC}"
         exit 1
     }
+
+    # Ensure PyQt6 is installed
+    if ! python -c "import PyQt6" &> /dev/null; then
+        echo -e "${YELLOW}PyQt6 not detected — installing it manually...${NC}"
+        pip install PyQt6 || {
+            echo -e "${RED}Failed to install PyQt6${NC}"
+            exit 1
+        }
+    fi
+
     deactivate
 
     # Create desktop shortcut (Linux only)
