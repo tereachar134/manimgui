@@ -113,6 +113,26 @@ def main():
         project_dir_str = st.text_input("Project directory", value=str(Path.cwd()))
         project_dir = Path(project_dir_str).expanduser().resolve()
 
+        if st.button("🔄 Update from GitHub", use_container_width=True):
+            repo_dir = Path(__file__).resolve().parent
+            git_dir = repo_dir / ".git"
+            if not git_dir.exists():
+                st.error("No git repository found next to the app files.")
+            else:
+                update = subprocess.run(
+                    ["git", "pull", "--ff-only"],
+                    cwd=str(repo_dir),
+                    capture_output=True,
+                    text=True,
+                )
+                output = "\n".join(x for x in [update.stdout.strip(), update.stderr.strip()] if x)
+                if update.returncode == 0:
+                    st.success("Update completed. Restart Streamlit if needed.")
+                else:
+                    st.error("Update failed. Check output below.")
+                if output:
+                    st.code(output, language="bash")
+
         py_files = list_py_files(project_dir)
         selected_file = st.selectbox("Python file", options=py_files if py_files else [""])
         st.session_state.log_filter = st.selectbox(

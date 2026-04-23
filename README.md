@@ -19,6 +19,7 @@ A modern toolset for creating Manim animations with:
 - Log filtering (`All`, `Info`, `Warnings+`, `Errors`)
 - Download logs as a file
 - Shows latest output file and output folder path
+- Built-in **Update from GitHub** button in sidebar
 - Single-command launch for browser-based interaction
 
 ---
@@ -94,6 +95,7 @@ streamlit run manimgui_web.py
 4. Choose quality and output format.
 5. Click **Render Scene**.
 6. Watch filtered logs and download them when needed.
+7. Use **Update from GitHub** in the sidebar to pull latest changes.
 
 ---
 
@@ -111,6 +113,7 @@ Python packages are in `requirements.txt`.
 
 - `QAction` import is PyQt6-compatible (`QtGui`).
 - Web rendering invokes your local `manim` binary in the selected project directory.
+- Desktop top bar and Web sidebar include an update button that runs `git pull --ff-only`.
 
 ---
 

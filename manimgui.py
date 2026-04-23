@@ -143,6 +143,11 @@ class ManimGUI(QWidget):
         snippets_btn.setObjectName("actionBtn")
         snippets_btn.clicked.connect(self.show_snippets_panel)
 
+        update_btn = QPushButton("🔄 Update App")
+        update_btn.setObjectName("actionBtn")
+        update_btn.setToolTip("Pull the latest code from GitHub")
+        update_btn.clicked.connect(self.update_from_github)
+
         fullscreen_btn = QToolButton()
         fullscreen_btn.setText("⛶")
         fullscreen_btn.setToolTip("Toggle Fullscreen (F11)")
@@ -158,6 +163,7 @@ class ManimGUI(QWidget):
         top_layout.addWidget(select_btn)
         top_layout.addWidget(new_file_btn)
         top_layout.addWidget(snippets_btn)
+        top_layout.addWidget(update_btn)
         top_layout.addWidget(fullscreen_btn)
         layout.addWidget(top_bar)
 
@@ -1401,6 +1407,48 @@ class ManimGUI(QWidget):
             "</ul>"
             "<p>Built with PyQt6</p>"
         )
+
+    def update_from_github(self):
+        """Update the local app by pulling the latest changes from git remote"""
+        repo_dir = os.path.dirname(os.path.abspath(__file__))
+        git_dir = os.path.join(repo_dir, ".git")
+
+        if not os.path.isdir(git_dir):
+            QMessageBox.warning(
+                self,
+                "Update Unavailable",
+                "No git repository found in the app directory."
+            )
+            return
+
+        self.append_to_log("🔄 Checking for updates from GitHub...", "info")
+        result = subprocess.run(
+            ["git", "pull", "--ff-only"],
+            cwd=repo_dir,
+            capture_output=True,
+            text=True
+        )
+
+        stdout = result.stdout.strip()
+        stderr = result.stderr.strip()
+        details = "\n".join(part for part in [stdout, stderr] if part).strip()
+        if details:
+            self.append_to_log(details, "normal")
+
+        if result.returncode == 0:
+            self.append_to_log("✅ Update completed successfully.", "info")
+            QMessageBox.information(
+                self,
+                "Update Complete",
+                "The app was updated successfully.\nRestart the app to apply all changes."
+            )
+        else:
+            self.append_to_log("❌ Update failed. Check logs for details.", "error")
+            QMessageBox.critical(
+                self,
+                "Update Failed",
+                f"Could not update from GitHub.\n\n{details or 'Unknown git error.'}"
+            )
 
     def file_tree_double_clicked(self, index):
         path = self.file_model.filePath(index)
