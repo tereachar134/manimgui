@@ -1,3 +1,4 @@
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -27,12 +28,16 @@ def detect_scene_classes(code: str):
 def list_py_files(project_dir: Path):
     if not project_dir.exists():
         return []
-    return sorted([str(p.relative_to(project_dir)) for p in project_dir.rglob("*.py")])
+    files = []
+    for path in project_dir.rglob("*.py"):
+        if path.is_file():
+            files.append(str(path.relative_to(project_dir)))
+    return sorted(files)
 
 
 def update_from_github(repo_dir: Path):
     git_dir = repo_dir / ".git"
-    if not git_dir.exists():
+    if not os.path.isdir(git_dir):
         return False, "No git repository found next to the app files."
 
     update = subprocess.run(
