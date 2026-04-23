@@ -13,13 +13,13 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFileDialog,
     QPushButton, QTabWidget, QTextEdit, QLabel, QLineEdit, QMessageBox,
     QProgressBar, QToolButton, QInputDialog, QSplitter,
-    QTreeView, QComboBox, QToolBar, QMenu, QMenuBar, QAction,
+    QTreeView, QComboBox, QToolBar, QMenu, QMenuBar,
     QShortcut, QFrame, QScrollArea, QGridLayout, QSizePolicy,
     QDialog, QDialogButtonBox, QListWidget, QListWidgetItem, QCheckBox
 )
 from PyQt6.QtCore import Qt, QProcess, QTimer, QDir, QUrl, QSettings, QStandardPaths
 from PyQt6.QtGui import (
-    QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter,
+    QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter, QAction,
     QDesktopServices, QKeySequence, QPixmap, QMovie
 )
 
