@@ -1,6 +1,6 @@
 # Manim GUI + Web Studio
 
-A modern toolset for creating Manim animations with:
+Create and render Manim animations with either:
 - 🖥️ **Desktop app** (`manimgui.py`, PyQt6)
 - 🌐 **Web app** (`manimgui_web.py`, Streamlit)
 
@@ -9,37 +9,42 @@ A modern toolset for creating Manim animations with:
 ## Features
 
 ### Shared workflow
-- Edit Manim scene code
-- Auto-detect scene classes
-- Render with selectable quality/output mode
-- View structured render logs
+- Edit Manim code
+- Auto-detect `Scene` classes
+- Render with quality/output presets
+- View detailed render logs
 
 ### Web Studio highlights
-- Better web UI layout (editor + logs + output panel)
-- Supports nested project structures (finds Python files in subfolders)
+- Two-pane layout (editor + logs/output)
 - Log filtering (`All`, `Info`, `Warnings+`, `Errors`)
-- Download logs as a file
-- Shows latest output file and output folder path
-- Built-in **Update from GitHub** button in sidebar
-- Single-command launch for browser-based interaction
+- Download logs as `.txt`
+- Shows latest output file/folder
+- Finds Python files in nested folders
+- **Update from GitHub** button in sidebar
+
+### Desktop highlights
+- Rich PyQt editor interface with project explorer
+- Log panel with filter, copy-all, copy-selected, export, clear
+- Open output file + output folder buttons
+- **Update App** button in top bar (`git pull --ff-only`)
 
 ---
 
 ## Quick Start
 
-### 1) Install (One-click)
+### 1) Install (one-click)
 
-#### Linux / macOS (one command)
+#### Linux / macOS
 ```bash
 curl -sL https://raw.githubusercontent.com/tereachar134/manimgui/main/install.sh | bash
 ```
 
-#### Windows PowerShell (one command)
+#### Windows PowerShell
 ```powershell
 irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | iex
 ```
 
-### 2) Install (Manual commands)
+### 2) Install (manual)
 
 #### Linux / macOS manual
 ```bash
@@ -59,65 +64,51 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-### 3) Run (Desktop)
-
+### 3) Run desktop
 ```bash
 python manimgui.py
 ```
 
-### 4) Run (Web, one command)
-
+### 4) Run web (one command)
 ```bash
 streamlit run manimgui_web.py
 ```
 
 Then open the local URL shown by Streamlit (usually `http://localhost:8501`).
 
-### 5) Other useful manual commands
-
+### 5) Useful commands
 ```bash
-# verify Python syntax quickly
+# syntax check
 python -m py_compile manimgui.py manimgui_web.py
 
-# run desktop app
+# run desktop
 python manimgui.py
 
-# run web app
+# run web
 streamlit run manimgui_web.py
 ```
 
 ---
 
 ## Web Usage
-
-1. Set your **project directory** in the sidebar.
-2. Select a `.py` file (or create/save one from editor content).
+1. Set **project directory** in sidebar.
+2. Select a `.py` file (or create one by saving editor content).
 3. Enter/select your `Scene` class.
-4. Choose quality and output format.
+4. Choose quality + output.
 5. Click **Render Scene**.
-6. Watch filtered logs and download them when needed.
-7. Use **Update from GitHub** in the sidebar to pull latest changes.
+6. Use log filter/download as needed.
+7. Use **Update from GitHub** to pull latest code.
 
 ---
 
 ## Requirements
-
 - Python 3.9+
-- FFmpeg (required by Manim)
-- Cairo / LaTeX dependencies required by your Manim setup
+- FFmpeg
+- Cairo / LaTeX dependencies required by Manim
 
-Python packages are in `requirements.txt`.
-
----
-
-## Notes
-
-- `QAction` import is PyQt6-compatible (`QtGui`).
-- Web rendering invokes your local `manim` binary in the selected project directory.
-- Desktop top bar and Web sidebar include an update button that runs `git pull --ff-only`.
+Python packages are listed in `requirements.txt`.
 
 ---
 
 ## License
-
 MIT
