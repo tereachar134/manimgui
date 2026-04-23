@@ -1,76 +1,119 @@
-# Manim GUI Editor by Dimensional Algebra  
-*A visual interface for creating stunning mathematical animations with Manim*
+# Manim GUI + Web Studio
 
-![Manim GUI Editor](https://i.ibb.co/m5bjPzsz/Screenshot-from-2025-07-18-23-50-33.png)  
-*The Manim GUI Editor interface - by Dimensional Algebra*
-
----
-
-## ✨ Key Features  
-- 🧮 **Perfect companion** for [Dimensional Algebra tutorials](https://www.youtube.com/@D-Algebra)  
-- 🖥️ **Intuitive GUI** - no terminal commands needed  
-- 📈 **Real-time progress tracking**  
-- 🔍 **Smart auto-detection** of scene classes  
-- 🎥 **Multiple render presets** (Low/High/4K)  
-- 📊 **Color-coded animation timeline**  
+A modern toolset for creating Manim animations with:
+- 🖥️ **Desktop app** (`manimgui.py`, PyQt6)
+- 🌐 **Web app** (`manimgui_web.py`, Streamlit)
 
 ---
 
-## 🚀 Installation Guide  
-Copy-paste these commands for your OS:  
+## Features
 
+### Shared workflow
+- Edit Manim scene code
+- Auto-detect scene classes
+- Render with selectable quality/output mode
+- View structured render logs
+
+### Web Studio highlights
+- Better web UI layout (editor + logs + output panel)
+- Log filtering (`All`, `Info`, `Warnings+`, `Errors`)
+- Download logs as a file
+- Shows latest output file and output folder path
+- Single-command launch for browser-based interaction
+
+---
+
+## Quick Start
+
+### 1) Install (One-click)
+
+#### Linux / macOS (one command)
 ```bash
-# ███╗   ███╗ █████╗ ███╗   ██╗██╗███╗   ███╗
-# ████╗ ████║██╔══██╗████╗  ██║██║████╗ ████║
-# ██╔████╔██║███████║██╔██╗ ██║██║██╔████╔██║
-# ██║╚██╔╝██║██╔══██║██║╚██╗██║██║██║╚██╔╝██║
-# ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║██║ ╚═╝ ██║
-# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝
-
-# === SYSTEM REQUIREMENTS ===
-# Python 3.7+ | 4GB RAM | FFmpeg
-
-# === LINUX/MACOS ===
-# Automatic install:
 curl -sL https://raw.githubusercontent.com/tereachar134/manimgui/main/install.sh | bash
+```
 
-# Manual install:
+#### Windows PowerShell (one command)
+```powershell
+irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | iex
+```
+
+### 2) Install (Manual commands)
+
+#### Linux / macOS manual
+```bash
 git clone https://github.com/tereachar134/manimgui.git
-cd manimgui && python3 -m venv venv
+cd manimgui
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python manimgui.py
+```
 
-# === WINDOWS ===
-# PowerShell install (Run as Admin):
-Start-Process powershell -Verb RunAs -ArgumentList "irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | iex"
-
-# Manual install:
-# 1. Download ZIP from github.com/tereachar134/manimgui
-# 2. In Command Prompt:
+#### Windows manual (PowerShell)
+```powershell
+git clone https://github.com/tereachar134/manimgui.git
+cd manimgui
 python -m venv venv
-venv\Scripts\activate
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+```
+
+### 3) Run (Desktop)
+
+```bash
+python manimgui.py
+```
+
+### 4) Run (Web, one command)
+
+```bash
+streamlit run manimgui_web.py
+```
+
+Then open the local URL shown by Streamlit (usually `http://localhost:8501`).
+
+### 5) Other useful manual commands
+
+```bash
+# verify Python syntax quickly
+python -m py_compile manimgui.py manimgui_web.py
+
+# run desktop app
 python manimgui.py
 
-# === TROUBLESHOOTING ===
-# Linux: sudo apt install ffmpeg sox libcairo2-dev
-# Windows: Install https://aka.ms/vs/17/release/vc_redist.x64.exe
+# run web app
+streamlit run manimgui_web.py
 ```
 
 ---
 
-## 🛠️ Usage Guide  
-1. **Create** a new project folder  
-2. **Write** your animation code  
-3. **Auto-detect** scene classes (or enter manually)  
-4. **Render** with one click (Low/High/4K quality)  
+## Web Usage
+
+1. Set your **project directory** in the sidebar.
+2. Select a `.py` file (or create/save one from editor content).
+3. Enter/select your `Scene` class.
+4. Choose quality and output format.
+5. Click **Render Scene**.
+6. Watch filtered logs and download them when needed.
 
 ---
 
-## 📜 License  
-MIT License - Free for educational and commercial use  
+## Requirements
+
+- Python 3.9+
+- FFmpeg (required by Manim)
+- Cairo / LaTeX dependencies required by your Manim setup
+
+Python packages are in `requirements.txt`.
 
 ---
 
-🔗 *Created by [Dimensional Algebra](https://www.youtube.com/@D-Algebra) - Making math visualization accessible to all*
+## Notes
+
+- `QAction` import is PyQt6-compatible (`QtGui`).
+- Web rendering invokes your local `manim` binary in the selected project directory.
+
+---
+
+## License
+
+MIT

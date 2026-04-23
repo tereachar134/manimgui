@@ -13,13 +13,13 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QFileDialog,
     QPushButton, QTabWidget, QTextEdit, QLabel, QLineEdit, QMessageBox,
     QProgressBar, QToolButton, QInputDialog, QSplitter,
-    QTreeView, QComboBox, QToolBar, QMenu, QMenuBar, QAction,
+    QTreeView, QComboBox, QToolBar, QMenu, QMenuBar,
     QShortcut, QFrame, QScrollArea, QGridLayout, QSizePolicy,
-    QDialog, QDialogButtonBox, QListWidget, QListWidgetItem
+    QDialog, QDialogButtonBox, QListWidget, QListWidgetItem, QCheckBox
 )
 from PyQt6.QtCore import Qt, QProcess, QTimer, QDir, QUrl, QSettings, QStandardPaths
 from PyQt6.QtGui import (
-    QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter,
+    QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter, QAction,
     QDesktopServices, QKeySequence, QPixmap, QMovie
 )
 
@@ -101,8 +101,10 @@ class ManimGUI(QWidget):
         self.animation_count = 0
         self.completed_animations = 0
         self.last_output_path = ""
+        self.last_output_dir = ""
         self.recent_projects = []
         self.snippets = self.load_snippets()
+        self.log_history = []
         self.init_ui()
         self.init_menu_bar()
         self.init_toolbar()
@@ -220,10 +222,16 @@ class ManimGUI(QWidget):
         log_title.setObjectName("panelHeader")
         
         copy_btn = QToolButton()
-        copy_btn.setText("📋 Copy")
+        copy_btn.setText("📋 Copy All")
         copy_btn.setToolTip("Copy all logs to clipboard")
         copy_btn.setObjectName("logBtn")
         copy_btn.clicked.connect(self.copy_logs)
+
+        copy_selected_btn = QToolButton()
+        copy_selected_btn.setText("✂️ Copy Selected")
+        copy_selected_btn.setToolTip("Copy selected logs")
+        copy_selected_btn.setObjectName("logBtn")
+        copy_selected_btn.clicked.connect(self.copy_selected_logs)
 
         clear_btn = QToolButton()
         clear_btn.setText("🗑️ Clear")
@@ -237,10 +245,23 @@ class ManimGUI(QWidget):
         export_btn.setObjectName("logBtn")
         export_btn.clicked.connect(self.export_logs)
 
+        self.log_level_combo = QComboBox()
+        self.log_level_combo.setObjectName("logLevelCombo")
+        self.log_level_combo.addItems(["All Logs", "Info Only", "Warnings+", "Errors Only"])
+        self.log_level_combo.currentIndexChanged.connect(self.refresh_log_display)
+        self.log_level_combo.setMinimumWidth(120)
+
+        self.autoscroll_checkbox = QCheckBox("Auto-scroll")
+        self.autoscroll_checkbox.setChecked(True)
+        self.autoscroll_checkbox.setObjectName("logCheck")
+
         log_header_layout.addWidget(log_title)
         log_header_layout.addStretch()
+        log_header_layout.addWidget(self.log_level_combo)
+        log_header_layout.addWidget(self.autoscroll_checkbox)
         log_header_layout.addWidget(export_btn)
         log_header_layout.addWidget(copy_btn)
+        log_header_layout.addWidget(copy_selected_btn)
         log_header_layout.addWidget(clear_btn)
 
         self.output_log = QTextEdit()
@@ -312,6 +333,12 @@ class ManimGUI(QWidget):
         self.open_output_btn.clicked.connect(self.open_last_output)
         self.open_output_btn.setEnabled(False)
         self.open_output_btn.setMinimumHeight(40)
+
+        self.open_output_folder_btn = QPushButton("📁 Open Output Folder")
+        self.open_output_folder_btn.setObjectName("openOutputFolderBtn")
+        self.open_output_folder_btn.clicked.connect(self.open_output_folder)
+        self.open_output_folder_btn.setEnabled(False)
+        self.open_output_folder_btn.setMinimumHeight(40)
         
         preview_btn = QPushButton("👁️ Preview Code")
         preview_btn.setObjectName("previewBtn")
@@ -320,6 +347,7 @@ class ManimGUI(QWidget):
 
         action_buttons_layout.addWidget(self.render_btn)
         action_buttons_layout.addWidget(self.open_output_btn)
+        action_buttons_layout.addWidget(self.open_output_folder_btn)
         action_buttons_layout.addWidget(self.preview_btn)
         action_buttons_layout.addWidget(self.stop_render_btn)
         
@@ -543,6 +571,22 @@ class ManimGUI(QWidget):
                 background-color: #45475a;
                 color: #6c7086;
             }
+
+            QPushButton#openOutputFolderBtn {
+                background-color: #74c7ec;
+                color: #1e1e2e;
+                font-weight: bold;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 8px;
+            }
+            QPushButton#openOutputFolderBtn:hover {
+                background-color: #89dceb;
+            }
+            QPushButton#openOutputFolderBtn:disabled {
+                background-color: #45475a;
+                color: #6c7086;
+            }
             
             /* Preview button */
             QPushButton#previewBtn {
@@ -598,6 +642,20 @@ class ManimGUI(QWidget):
             QToolButton#logBtn:hover {
                 background-color: #45475a;
                 border-color: #89b4fa;
+            }
+
+            QComboBox#logLevelCombo {
+                background-color: #313244;
+                color: #cdd6f4;
+                border: 1px solid #585b70;
+                border-radius: 6px;
+                padding: 4px 8px;
+                min-height: 24px;
+            }
+            QCheckBox#logCheck {
+                color: #a6adc8;
+                spacing: 6px;
+                font-size: 9pt;
             }
             
             /* Input fields */
@@ -1054,7 +1112,11 @@ class ManimGUI(QWidget):
             "Rotate": """square = Square()\nself.play(Create(square))\nself.play(Rotate(square, angle=PI/2))\nself.wait()""",
             "Scale": """circle = Circle()\nself.play(Create(circle))\nself.play(circle.animate.scale(2))\nself.wait()""",
             "Color Change": """circle = Circle()\nself.play(Create(circle))\nself.play(circle.animate.set_color(RED))\nself.wait()""",
-            "Group Objects": """circle = Circle()\nsquare = Square()\ngroup = VGroup(circle, square).arrange(RIGHT)\nself.play(Create(group))\nself.wait()"""
+            "Group Objects": """circle = Circle()\nsquare = Square()\ngroup = VGroup(circle, square).arrange(RIGHT)\nself.play(Create(group))\nself.wait()""",
+            "3D Axes Setup": """class ThreeDSceneDemo(ThreeDScene):\n    def construct(self):\n        axes = ThreeDAxes()\n        self.set_camera_orientation(phi=75 * DEGREES, theta=30 * DEGREES)\n        self.play(Create(axes))\n        self.wait()""",
+            "ValueTracker + Updater": """tracker = ValueTracker(0)\ndot = Dot()\ndot.add_updater(lambda d: d.move_to(RIGHT * tracker.get_value()))\nself.add(dot)\nself.play(tracker.animate.set_value(4), run_time=2)\nself.wait()""",
+            "MathTex Equation": """eq = MathTex(r\"e^{i\\pi} + 1 = 0\")\nself.play(Write(eq))\nself.wait()""",
+            "Graph Plot": """axes = Axes(x_range=[-3, 3], y_range=[-1, 9])\ncurve = axes.plot(lambda x: x**2, color=BLUE)\nself.play(Create(axes), Create(curve))\nself.wait()"""
         }
         
         settings = QSettings("ManimGUI", "Snippets")
@@ -1482,25 +1544,35 @@ class ManimGUI(QWidget):
             QMessageBox.warning(self, "Missing Scene Name", "Enter the SceneClassName to render.")
             return
 
-        quality_map = {"Low Quality": "-ql", "High Quality": "-qh", "4K": "-qk"}
+        quality_map = {
+            "📱 Low (480p)": "-ql",
+            "💻 High (1080p)": "-qh",
+            "🎥 4K (2160p)": "-qk",
+            "🖼️ Custom": "-qm"
+        }
         quality = self.quality_combo.currentText()
-        flag = quality_map[quality]
+        flag = quality_map.get(quality, "-qh")
         
         output_type = self.output_type_combo.currentText()
-        if output_type == "Video":
+        if output_type == "🎬 MP4 Video":
             cmd = f"manim -p {flag} \"{filepath}\" {scene_class}"
-        elif output_type == "Image (PNG)":
+        elif output_type == "🖼️ PNG Image":
             cmd = f"manim -s {flag} \"{filepath}\" {scene_class}"
-        elif output_type == "Image (SVG)":
+        elif output_type == "📐 SVG Vector":
             cmd = f"manim -s --format=svg {flag} \"{filepath}\" {scene_class}"
+        else:
+            cmd = f"manim -p {flag} \"{filepath}\" {scene_class}"
 
+        self.log_history.clear()
         self.output_log.clear()
         self.last_progress = 0
         self.completed_animations = 0
         self.progress_bar.setValue(0)
         self.progress_bar.setStyleSheet("QProgressBar::chunk { background-color: #4CAF50; }")
         self.last_output_path = ""
+        self.last_output_dir = ""
         self.open_output_btn.setEnabled(False)
+        self.open_output_folder_btn.setEnabled(False)
         self.animation_counter.setText(f"Animations: 0/{self.animation_count}")
         
         self.append_to_log(f"▶️ Starting render: {cmd}\n", "info")
@@ -1554,6 +1626,7 @@ class ManimGUI(QWidget):
                 # Manim gives a relative path, make it absolute
                 relative_path = match.group(1).strip()
                 self.last_output_path = os.path.join(self.project_path, relative_path)
+                self.last_output_dir = os.path.dirname(self.last_output_path)
                 self.append_to_log(f"🎥 Output available at: {self.last_output_path}", "info")
 
         if "INFO" in line: self.append_to_log(line, "info")
@@ -1562,18 +1635,44 @@ class ManimGUI(QWidget):
         else: self.append_to_log(line, "normal")
 
     def append_to_log(self, text, msg_type):
+        self.log_history.append((text, msg_type))
+        self.refresh_log_display()
+
+    def _log_type_allowed(self, msg_type):
+        current_filter = self.log_level_combo.currentText() if hasattr(self, "log_level_combo") else "All Logs"
+        if current_filter == "Info Only":
+            return msg_type == "info"
+        if current_filter == "Warnings+":
+            return msg_type in {"warning", "error"}
+        if current_filter == "Errors Only":
+            return msg_type == "error"
+        return True
+
+    def refresh_log_display(self):
+        if not hasattr(self, "output_log"):
+            return
+        self.output_log.clear()
         cursor = self.output_log.textCursor()
-        cursor.movePosition(QTextCursor.MoveOperation.End)
-        
-        format = QTextCharFormat()
-        if msg_type == "error": format.setForeground(QColor("#ff4444")); format.setFontWeight(75)
-        elif msg_type == "warning": format.setForeground(QColor("#ffbb33"))
-        elif msg_type == "info": format.setForeground(QColor("#33b5e5"))
-        else: format.setForeground(QColor("#f8f8f8"))
-        
-        cursor.setCharFormat(format)
-        cursor.insertText(text + "\n")
-        self.output_log.ensureCursorVisible()
+        for text, msg_type in self.log_history:
+            if not self._log_type_allowed(msg_type):
+                continue
+            cursor.movePosition(QTextCursor.MoveOperation.End)
+            format = QTextCharFormat()
+            if msg_type == "error":
+                format.setForeground(QColor("#ff4444"))
+                format.setFontWeight(75)
+            elif msg_type == "warning":
+                format.setForeground(QColor("#ffbb33"))
+            elif msg_type == "info":
+                format.setForeground(QColor("#33b5e5"))
+            else:
+                format.setForeground(QColor("#f8f8f8"))
+
+            cursor.setCharFormat(format)
+            cursor.insertText(text + "\n")
+
+        if self.autoscroll_checkbox.isChecked():
+            self.output_log.ensureCursorVisible()
 
     def update_progress(self):
         self.progress_bar.setValue(self.last_progress)
@@ -1587,6 +1686,7 @@ class ManimGUI(QWidget):
             self.progress_bar.setValue(100)
             if self.last_output_path:
                 self.open_output_btn.setEnabled(True)
+                self.open_output_folder_btn.setEnabled(True)
             self.animation_counter.setText(f"Animations: {self.animation_count}/{self.animation_count}")
         else:
             self.append_to_log(f"❌ Render failed with exit code {exit_code}", "error")
@@ -1612,8 +1712,25 @@ class ManimGUI(QWidget):
         QApplication.clipboard().setText(self.output_log.toPlainText())
         self.append_to_log("📋 Logs copied to clipboard", "info")
 
+    def copy_selected_logs(self):
+        selected = self.output_log.textCursor().selectedText()
+        if selected.strip():
+            QApplication.clipboard().setText(selected)
+            self.append_to_log("✂️ Selected logs copied to clipboard", "info")
+        else:
+            self.append_to_log("⚠️ No log text selected to copy", "warning")
+
     def clear_logs(self):
+        self.log_history.clear()
         self.output_log.clear()
+
+    def open_output_folder(self):
+        if self.last_output_dir and os.path.exists(self.last_output_dir):
+            QDesktopServices.openUrl(QUrl.fromLocalFile(self.last_output_dir))
+        elif self.last_output_path and os.path.exists(os.path.dirname(self.last_output_path)):
+            QDesktopServices.openUrl(QUrl.fromLocalFile(os.path.dirname(self.last_output_path)))
+        else:
+            QMessageBox.warning(self, "Folder Not Found", "No output folder is available yet. Render a scene first.")
 
     def default_scene_template(self, class_name="MyScene"):
         # Sanitize class_name to be a valid identifier
