@@ -1,4 +1,3 @@
-import os
 import re
 import subprocess
 from pathlib import Path
@@ -28,7 +27,24 @@ def detect_scene_classes(code: str):
 def list_py_files(project_dir: Path):
     if not project_dir.exists():
         return []
-    return sorted([str(p.relative_to(project_dir)) for p in project_dir.glob("*.py")])
+    return sorted([str(p.relative_to(project_dir)) for p in project_dir.rglob("*.py")])
+
+
+def update_from_github(repo_dir: Path):
+    git_dir = repo_dir / ".git"
+    if not git_dir.exists():
+        return False, "No git repository found next to the app files."
+
+    update = subprocess.run(
+        ["git", "pull", "--ff-only"],
+        cwd=str(repo_dir),
+        capture_output=True,
+        text=True,
+    )
+    output = "\n".join(x for x in [update.stdout.strip(), update.stderr.strip()] if x).strip()
+    if not output:
+        output = "No output from git."
+    return update.returncode == 0, output
 
 
 def build_manim_command(file_path: Path, scene_class: str, quality_label: str, output_label: str):
@@ -115,23 +131,12 @@ def main():
 
         if st.button("🔄 Update from GitHub", use_container_width=True):
             repo_dir = Path(__file__).resolve().parent
-            git_dir = repo_dir / ".git"
-            if not git_dir.exists():
-                st.error("No git repository found next to the app files.")
+            ok, output = update_from_github(repo_dir)
+            if ok:
+                st.success("Update completed. Restart Streamlit if needed.")
             else:
-                update = subprocess.run(
-                    ["git", "pull", "--ff-only"],
-                    cwd=str(repo_dir),
-                    capture_output=True,
-                    text=True,
-                )
-                output = "\n".join(x for x in [update.stdout.strip(), update.stderr.strip()] if x)
-                if update.returncode == 0:
-                    st.success("Update completed. Restart Streamlit if needed.")
-                else:
-                    st.error("Update failed. Check output below.")
-                if output:
-                    st.code(output, language="bash")
+                st.error("Update failed. Check output below.")
+            st.code(output, language="bash")
 
         py_files = list_py_files(project_dir)
         selected_file = st.selectbox("Python file", options=py_files if py_files else [""])

@@ -16,6 +16,7 @@ A modern toolset for creating Manim animations with:
 
 ### Web Studio highlights
 - Better web UI layout (editor + logs + output panel)
+- Supports nested project structures (finds Python files in subfolders)
 - Log filtering (`All`, `Info`, `Warnings+`, `Errors`)
 - Download logs as a file
 - Shows latest output file and output folder path
