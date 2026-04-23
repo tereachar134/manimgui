@@ -21,6 +21,7 @@ Create and render Manim animations with either:
 - Shows latest output file/folder
 - Finds Python files in nested folders
 - **Update from GitHub** button in sidebar
+- **Deep Error Scan** button to detect unresolved merge markers
 
 ### Desktop highlights
 - Rich PyQt editor interface with project explorer

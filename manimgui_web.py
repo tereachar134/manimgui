@@ -52,6 +52,23 @@ def update_from_github(repo_dir: Path):
     return update.returncode == 0, output
 
 
+def deep_repo_scan(repo_dir: Path):
+    """Scan repository files for unresolved merge markers."""
+    markers = ("<<<<<<<", "=======", ">>>>>>>")
+    flagged = []
+    for pattern in ("*.py", "*.md", "*.txt", "*.yml", "*.yaml"):
+        for file_path in repo_dir.rglob(pattern):
+            if ".git" in file_path.parts:
+                continue
+            try:
+                content = file_path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            if any(marker in content for marker in markers):
+                flagged.append(str(file_path.relative_to(repo_dir)))
+    return sorted(flagged)
+
+
 def build_manim_command(file_path: Path, scene_class: str, quality_label: str, output_label: str):
     cmd = ["manim", QUALITY_FLAGS.get(quality_label, "-qh")]
     cmd.extend(OUTPUT_FLAGS.get(output_label, []))
@@ -142,6 +159,15 @@ def main():
             else:
                 st.error("Update failed. Check output below.")
             st.code(output, language="bash")
+
+        if st.button("🔍 Deep Error Scan", use_container_width=True):
+            repo_dir = Path(__file__).resolve().parent
+            conflict_files = deep_repo_scan(repo_dir)
+            if conflict_files:
+                st.error("Found unresolved merge markers:")
+                st.code("\n".join(conflict_files), language="bash")
+            else:
+                st.success("Deep scan complete: no merge conflict markers found.")
 
         py_files = list_py_files(project_dir)
         selected_file = st.selectbox("Python file", options=py_files if py_files else [""])
