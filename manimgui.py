@@ -33,13 +33,13 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         keyword_format.setForeground(QColor("#c586c0"))  # Magenta
         keyword_format.setFontWeight(QFont.Weight.Bold)
         keywords = [
-            "\bfrom\b", "\bimport\b", "\bclass\b", "\bdef\b",
-            "\bself\b", "\breturn\b", "\bfor\b", "\bin\b",
-            "\bwhile\b", "\bif\b", "\belif\b", "\belse\b",
-            "\bpass\b", "\bcontinue\b", "\bbreak\b", "\btry\b",
-            "\bexcept\b", "\bfinally\b", "\bwith\b", "\bas\b",
-            "\bassert\b", "\bdel\b", "\bglobal\b", "\bnonlocal\b",
-            "\blambda\b", "\byield\b", "\bTrue\b", "\bFalse\b", "\bNone\b"
+            r"\bfrom\b", r"\bimport\b", r"\bclass\b", r"\bdef\b",
+            r"\bself\b", r"\breturn\b", r"\bfor\b", r"\bin\b",
+            r"\bwhile\b", r"\bif\b", r"\belif\b", r"\belse\b",
+            r"\bpass\b", r"\bcontinue\b", r"\bbreak\b", r"\btry\b",
+            r"\bexcept\b", r"\bfinally\b", r"\bwith\b", r"\bas\b",
+            r"\bassert\b", r"\bdel\b", r"\bglobal\b", r"\bnonlocal\b",
+            r"\blambda\b", r"\byield\b", r"\bTrue\b", r"\bFalse\b", r"\bNone\b"
         ]
         self.highlighting_rules.extend([(re.compile(pattern), keyword_format) for pattern in keywords])
 
@@ -47,19 +47,19 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         manim_format = QTextCharFormat()
         manim_format.setForeground(QColor("#4ec9b0")) # Teal
         manim_classes = [
-            "\bScene\b", "\bMobject\b", "\bVMobject\b", "\bText\b",
-            "\bWrite\b", "\bCreate\b", "\bFadeIn\b", "\bFadeOut\b",
-            "\bCircle\b", "\bSquare\b", "\bLine\b", "\bDot\b",
-            "\bArrow\b", "\bVector\b", "\bMatrix\b", "\bTable\b",
-            "\bplay\b", "\bwait\b", "\badd\b", "\bremove\b"
+            r"\bScene\b", r"\bMobject\b", r"\bVMobject\b", r"\bText\b",
+            r"\bWrite\b", r"\bCreate\b", r"\bFadeIn\b", r"\bFadeOut\b",
+            r"\bCircle\b", r"\bSquare\b", r"\bLine\b", r"\bDot\b",
+            r"\bArrow\b", r"\bVector\b", r"\bMatrix\b", r"\bTable\b",
+            r"\bplay\b", r"\bwait\b", r"\badd\b", r"\bremove\b"
         ]
         self.highlighting_rules.extend([(re.compile(pattern), manim_format) for pattern in manim_classes])
 
         # String format
         string_format = QTextCharFormat()
         string_format.setForeground(QColor("#ce9178"))  # Orange
-        self.highlighting_rules.append((re.compile("\".*\""), string_format))
-        self.highlighting_rules.append((re.compile(r"'.*'", re.DOTALL), string_format))
+        self.highlighting_rules.append((re.compile(r'"[^"\\]*(\\.[^"\\]*)*"'), string_format))
+        self.highlighting_rules.append((re.compile(r"'[^'\\]*(\\.[^'\\]*)*'"), string_format))
 
         # Comment format
         comment_format = QTextCharFormat()
