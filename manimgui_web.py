@@ -28,6 +28,7 @@ def detect_scene_classes(code: str):
 def list_py_files(project_dir: Path):
     if not project_dir.exists():
         return []
+  codex/improve-logging-system-and-ui-gcwvxn
     files = []
     for path in project_dir.rglob("*.py"):
         if path.is_file():
@@ -50,6 +51,9 @@ def update_from_github(repo_dir: Path):
     if not output:
         output = "No output from git."
     return update.returncode == 0, output
+ 
+    return sorted([str(p.relative_to(project_dir)) for p in project_dir.glob("*.py")])
+  main
 
 
 def build_manim_command(file_path: Path, scene_class: str, quality_label: str, output_label: str):
@@ -134,6 +138,7 @@ def main():
         project_dir_str = st.text_input("Project directory", value=str(Path.cwd()))
         project_dir = Path(project_dir_str).expanduser().resolve()
 
+  codex/improve-logging-system-and-ui-gcwvxn
         if st.button("🔄 Update from GitHub", use_container_width=True):
             repo_dir = Path(__file__).resolve().parent
             ok, output = update_from_github(repo_dir)
@@ -143,6 +148,8 @@ def main():
                 st.error("Update failed. Check output below.")
             st.code(output, language="bash")
 
+ 
+  main
         py_files = list_py_files(project_dir)
         selected_file = st.selectbox("Python file", options=py_files if py_files else [""])
         st.session_state.log_filter = st.selectbox(
