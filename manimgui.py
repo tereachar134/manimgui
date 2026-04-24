@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
     QShortcut, QFrame, QScrollArea, QGridLayout, QSizePolicy,
     QDialog, QDialogButtonBox, QListWidget, QListWidgetItem, QCheckBox
 )
-from PyQt6.QtCore import Qt, QProcess, QTimer, QDir, QUrl, QSettings, QStandardPaths
+from PyQt6.QtCore import Qt, QProcess, QTimer, QDir, QUrl, QSettings, QStandardPaths, QSize
 from PyQt6.QtGui import (
     QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter, QAction,
     QDesktopServices, QKeySequence, QPixmap, QMovie
@@ -1041,7 +1041,7 @@ class ManimGUI(QWidget):
         toolbar = QToolBar(self)
         toolbar.setObjectName("quickToolbar")
         toolbar.setMovable(False)
-        toolbar.setIconSize(Qt.Size(20, 20))
+        toolbar.setIconSize(QSize(20, 20))
         toolbar.setStyleSheet("""
             QToolBar#quickToolbar {
                 background-color: #313244;

@@ -28,7 +28,10 @@ def detect_scene_classes(code: str):
 def list_py_files(project_dir: Path):
     if not project_dir.exists():
         return []
+  codex/improve-logging-system-and-ui-wjiw0z
+ 
   codex/improve-logging-system-and-ui-gcwvxn
+   main
     files = []
     for path in project_dir.rglob("*.py"):
         if path.is_file():
@@ -51,8 +54,28 @@ def update_from_github(repo_dir: Path):
     if not output:
         output = "No output from git."
     return update.returncode == 0, output
+  codex/improve-logging-system-and-ui-wjiw0z
+
+
+def deep_repo_scan(repo_dir: Path):
+    """Scan repository files for unresolved merge markers."""
+    markers = ("<<<<<<<", "=======", ">>>>>>>")
+    flagged = []
+    for pattern in ("*.py", "*.md", "*.txt", "*.yml", "*.yaml"):
+        for file_path in repo_dir.rglob(pattern):
+            if ".git" in file_path.parts:
+                continue
+            try:
+                content = file_path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            if any(marker in content for marker in markers):
+                flagged.append(str(file_path.relative_to(repo_dir)))
+    return sorted(flagged)
+ 
  
     return sorted([str(p.relative_to(project_dir)) for p in project_dir.glob("*.py")])
+  main
   main
 
 
@@ -138,7 +161,10 @@ def main():
         project_dir_str = st.text_input("Project directory", value=str(Path.cwd()))
         project_dir = Path(project_dir_str).expanduser().resolve()
 
+  codex/improve-logging-system-and-ui-wjiw0z
+ 
   codex/improve-logging-system-and-ui-gcwvxn
+  main
         if st.button("🔄 Update from GitHub", use_container_width=True):
             repo_dir = Path(__file__).resolve().parent
             ok, output = update_from_github(repo_dir)
@@ -148,7 +174,19 @@ def main():
                 st.error("Update failed. Check output below.")
             st.code(output, language="bash")
 
+  codex/improve-logging-system-and-ui-wjiw0z
+        if st.button("🔍 Deep Error Scan", use_container_width=True):
+            repo_dir = Path(__file__).resolve().parent
+            conflict_files = deep_repo_scan(repo_dir)
+            if conflict_files:
+                st.error("Found unresolved merge markers:")
+                st.code("\n".join(conflict_files), language="bash")
+            else:
+                st.success("Deep scan complete: no merge conflict markers found.")
+
  
+ 
+  main
   main
         py_files = list_py_files(project_dir)
         selected_file = st.selectbox("Python file", options=py_files if py_files else [""])
