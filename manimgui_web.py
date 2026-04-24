@@ -28,10 +28,13 @@ def detect_scene_classes(code: str):
 def list_py_files(project_dir: Path):
     if not project_dir.exists():
         return []
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-wjiw0z
  
   codex/improve-logging-system-and-ui-gcwvxn
    main
+  main
     files = []
     for path in project_dir.rglob("*.py"):
         if path.is_file():
@@ -54,6 +57,15 @@ def update_from_github(repo_dir: Path):
     if not output:
         output = "No output from git."
     return update.returncode == 0, output
+  codex/improve-logging-system-and-ui-krnteu
+
+
+def deep_repo_scan(repo_dir: Path):
+    """Scan repository files for unresolved merge markers and syntax issues."""
+    markers = ("<<<<<<<", "=======", ">>>>>>>")
+    marker_flagged = []
+    syntax_flagged = []
+ 
   codex/improve-logging-system-and-ui-wjiw0z
 
 
@@ -61,6 +73,7 @@ def deep_repo_scan(repo_dir: Path):
     """Scan repository files for unresolved merge markers."""
     markers = ("<<<<<<<", "=======", ">>>>>>>")
     flagged = []
+  main
     for pattern in ("*.py", "*.md", "*.txt", "*.yml", "*.yaml"):
         for file_path in repo_dir.rglob(pattern):
             if ".git" in file_path.parts:
@@ -70,11 +83,25 @@ def deep_repo_scan(repo_dir: Path):
             except (UnicodeDecodeError, OSError):
                 continue
             if any(marker in content for marker in markers):
+  codex/improve-logging-system-and-ui-krnteu
+                marker_flagged.append(str(file_path.relative_to(repo_dir)))
+
+            if file_path.suffix == ".py":
+                try:
+                    compile(content, str(file_path), "exec")
+                except SyntaxError as exc:
+                    syntax_flagged.append(
+                        f"{file_path.relative_to(repo_dir)}:{exc.lineno} - {exc.msg}"
+                    )
+
+    return sorted(marker_flagged), sorted(syntax_flagged)
+ 
                 flagged.append(str(file_path.relative_to(repo_dir)))
     return sorted(flagged)
  
  
     return sorted([str(p.relative_to(project_dir)) for p in project_dir.glob("*.py")])
+  main
   main
   main
 
@@ -161,9 +188,12 @@ def main():
         project_dir_str = st.text_input("Project directory", value=str(Path.cwd()))
         project_dir = Path(project_dir_str).expanduser().resolve()
 
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-wjiw0z
  
   codex/improve-logging-system-and-ui-gcwvxn
+  main
   main
         if st.button("🔄 Update from GitHub", use_container_width=True):
             repo_dir = Path(__file__).resolve().parent
@@ -174,6 +204,20 @@ def main():
                 st.error("Update failed. Check output below.")
             st.code(output, language="bash")
 
+  codex/improve-logging-system-and-ui-krnteu
+        if st.button("🔍 Deep Error Scan", use_container_width=True):
+            repo_dir = Path(__file__).resolve().parent
+            conflict_files, syntax_errors = deep_repo_scan(repo_dir)
+            if conflict_files:
+                st.error("Found unresolved merge markers:")
+                st.code("\n".join(conflict_files), language="bash")
+            elif syntax_errors:
+                st.error("Found Python syntax/indentation errors:")
+                st.code("\n".join(syntax_errors), language="bash")
+            else:
+                st.success("Deep scan complete: no merge markers or syntax errors found.")
+
+ 
   codex/improve-logging-system-and-ui-wjiw0z
         if st.button("🔍 Deep Error Scan", use_container_width=True):
             repo_dir = Path(__file__).resolve().parent
@@ -186,6 +230,7 @@ def main():
 
  
  
+  main
   main
   main
         py_files = list_py_files(project_dir)

@@ -1,5 +1,8 @@
 # Manim GUI + Web Studio
 
+  codex/improve-logging-system-and-ui-krnteu
+Create and render Manim animations with either:
+ 
   codex/improve-logging-system-and-ui-wjiw0z
 Create and render Manim animations with either:
  
@@ -8,15 +11,19 @@ Create and render Manim animations with either:
  A modern toolset for creating Manim animations with:
   main
   main
+  main
 - 🖥️ **Desktop app** (`manimgui.py`, PyQt6)
 - 🌐 **Web app** (`manimgui_web.py`, Streamlit)
 
 ---
 
 ## Features
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-wjiw0z
  
   codex/improve-logging-system-and-ui-gcwvxn
+  main
   main
 
 ### Shared workflow
@@ -32,9 +39,13 @@ Create and render Manim animations with either:
 - Shows latest output file/folder
 - Finds Python files in nested folders
 - **Update from GitHub** button in sidebar
+  codex/improve-logging-system-and-ui-krnteu
+- **Deep Error Scan** button to detect unresolved merge markers and Python syntax issues
+ 
   codex/improve-logging-system-and-ui-wjiw0z
 - **Deep Error Scan** button to detect unresolved merge markers
  
+  main
   main
 
 ### Desktop highlights
@@ -42,49 +53,15 @@ Create and render Manim animations with either:
 - Log panel with filter, copy-all, copy-selected, export, clear
 - Open output file + output folder buttons
 - **Update App** button in top bar (`git pull --ff-only`)
-  codex/improve-logging-system-and-ui-wjiw0z
- 
- 
-  main
-
-### Shared workflow
-- Edit Manim scene code
-- Auto-detect scene classes
-- Render with selectable quality/output mode
-- View structured render logs
-
-  codex/improve-logging-system-and-ui-gcwvxn
-## Quick Start
-
-### 1) Install (one-click)
-
-#### Linux / macOS
-```bash
-curl -sL https://raw.githubusercontent.com/tereachar134/manimgui/main/install.sh | bash
-```
-
-#### Windows PowerShell
-```powershell
-irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | iex
-```
-
-### 2) Install (manual)
-
-#### Linux / macOS manual
- 
-### Web Studio highlights
-- Better web UI layout (editor + logs + output panel)
-- Log filtering (`All`, `Info`, `Warnings+`, `Errors`)
-- Download logs as a file
-- Shows latest output file and output folder path
-- Single-command launch for browser-based interaction
-  main
 
 ---
 
 ## Quick Start
 
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-wjiw0z
+  main
 ### 1) Install (one-click)
 
 #### Linux / macOS
@@ -96,6 +73,12 @@ curl -sL https://raw.githubusercontent.com/tereachar134/manimgui/main/install.sh
 ```powershell
 irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | iex
 ```
+  codex/improve-logging-system-and-ui-krnteu
+
+### 2) Install (manual)
+
+#### Linux / macOS manual
+ 
 
 ### 2) Install (manual)
 
@@ -105,6 +88,7 @@ irm https://raw.githubusercontent.com/tereachar134/manimgui/main/install.ps1 | i
 
   main
   main
+  main
 ```bash
 git clone https://github.com/tereachar134/manimgui.git
 cd manimgui
@@ -112,9 +96,12 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-wjiw0z
  
   codex/improve-logging-system-and-ui-gcwvxn
+  main
   main
 
 #### Windows manual (PowerShell)
@@ -128,6 +115,28 @@ pip install -r requirements.txt
 
 ### 3) Run desktop
 ```bash
+  codex/improve-logging-system-and-ui-krnteu
+python manimgui.py
+```
+
+### 4) Run web (one command)
+```bash
+streamlit run manimgui_web.py
+```
+
+Then open the local URL shown by Streamlit (usually `http://localhost:8501`).
+
+### 5) Useful commands
+```bash
+# syntax check
+python -m py_compile manimgui.py manimgui_web.py
+
+# run desktop
+python manimgui.py
+
+# run web
+streamlit run manimgui_web.py
+ 
 python manimgui.py
 ```
 
@@ -178,6 +187,7 @@ python manimgui.py
 ```bash
 streamlit run manimgui_web.py
   main
+  main
 ```
 
 Then open the local URL shown by Streamlit (usually `http://localhost:8501`).
@@ -217,7 +227,10 @@ Python packages are listed in `requirements.txt`.
 
 ---
 
+  codex/improve-logging-system-and-ui-krnteu
+ 
   codex/improve-logging-system-and-ui-gcwvxn
+  main
 ## Web Usage
 1. Set **project directory** in sidebar.
 2. Select a `.py` file (or create one by saving editor content).
@@ -235,6 +248,12 @@ Python packages are listed in `requirements.txt`.
 - Cairo / LaTeX dependencies required by Manim
 
 Python packages are listed in `requirements.txt`.
+  codex/improve-logging-system-and-ui-krnteu
+
+---
+
+## License
+ 
  
 ## Requirements
 
@@ -258,6 +277,7 @@ Python packages are in `requirements.txt`.
   codex/improve-logging-system-and-ui-gcwvxn
  
 
+  main
   main
   main
 MIT

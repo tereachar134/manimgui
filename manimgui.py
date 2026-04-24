@@ -14,12 +14,20 @@ from PyQt6.QtWidgets import (
     QPushButton, QTabWidget, QTextEdit, QLabel, QLineEdit, QMessageBox,
     QProgressBar, QToolButton, QInputDialog, QSplitter,
     QTreeView, QComboBox, QToolBar, QMenu, QMenuBar,
+  codex/improve-logging-system-and-ui-krnteu
+    QFrame, QScrollArea, QGridLayout, QSizePolicy,
+ 
     QShortcut, QFrame, QScrollArea, QGridLayout, QSizePolicy,
+  main
     QDialog, QDialogButtonBox, QListWidget, QListWidgetItem, QCheckBox
 )
 from PyQt6.QtCore import Qt, QProcess, QTimer, QDir, QUrl, QSettings, QStandardPaths, QSize
 from PyQt6.QtGui import (
+  codex/improve-logging-system-and-ui-krnteu
+    QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter, QAction, QShortcut,
+ 
     QTextCursor, QColor, QTextCharFormat, QIcon, QFont, QSyntaxHighlighter, QAction,
+  main
     QDesktopServices, QKeySequence, QPixmap, QMovie
 )
 
